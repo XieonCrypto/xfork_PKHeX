@@ -67,10 +67,10 @@ public partial class SAVEditor : UserControl, ISlotViewer<PictureBox>, ISaveFile
     {
         InitializeComponent();
 
-        L_SlotOccupied = new[] { L_DC1, L_DC2 };
-        TB_SlotEXP = new[] { TB_Daycare1XP, TB_Daycare2XP };
-        L_SlotEXP = new[] { L_XP1, L_XP2 };
-        SlotPictureBoxes = new[] { dcpkx1, dcpkx2 };
+        L_SlotOccupied = [L_DC1, L_DC2];
+        TB_SlotEXP = [TB_Daycare1XP, TB_Daycare2XP];
+        L_SlotEXP = [L_XP1, L_XP2];
+        SlotPictureBoxes = [dcpkx1, dcpkx2];
 
         Tab_Box.ContextMenuStrip = SortMenu = new BoxMenuStrip(this);
         M = new SlotChangeManager(this) { Env = EditEnv };
@@ -201,7 +201,7 @@ public partial class SAVEditor : UserControl, ISlotViewer<PictureBox>, ISaveFile
         return GetSlotData(index);
     }
 
-    private ISlotInfo GetSlotData(int index)
+    private SlotInfoMisc GetSlotData(int index)
     {
         var ofs = SAV.GetDaycareSlotOffset(SAV.DaycareIndex, index);
         return new SlotInfoMisc(SAV, index, ofs);
@@ -501,22 +501,23 @@ public partial class SAVEditor : UserControl, ISlotViewer<PictureBox>, ISaveFile
     }
 
     private void B_OpenWondercards_Click(object sender, EventArgs e) => OpenDialog(new SAV_Wondercard(SAV, sender as DataMysteryGift));
-    private void B_OpenPokepuffs_Click(object sender, EventArgs e) => OpenDialog(new SAV_Pokepuff(SAV));
-    private void B_OpenPokeBeans_Click(object sender, EventArgs e) => OpenDialog(new SAV_Pokebean(SAV));
+    private void B_OpenPokepuffs_Click(object sender, EventArgs e) => OpenDialog(new SAV_Pokepuff((ISaveBlock6Main)SAV));
+    private void B_OpenPokeBeans_Click(object sender, EventArgs e) => OpenDialog(new SAV_Pokebean((SAV7)SAV));
     private void B_OpenItemPouch_Click(object sender, EventArgs e) => OpenDialog(new SAV_Inventory(SAV));
     private void B_OpenBerryField_Click(object sender, EventArgs e) => OpenDialog(new SAV_BerryFieldXY((SAV6XY)SAV));
-    private void B_OpenPokeblocks_Click(object sender, EventArgs e) => OpenDialog(new SAV_PokeBlockORAS(SAV));
-    private void B_OpenSuperTraining_Click(object sender, EventArgs e) => OpenDialog(new SAV_SuperTrain(SAV));
-    private void B_OpenSecretBase_Click(object sender, EventArgs e) => OpenDialog(new SAV_SecretBase(SAV));
-    private void B_CellsStickers_Click(object sender, EventArgs e) => OpenDialog(new SAV_ZygardeCell(SAV));
+    private void B_OpenPokeblocks_Click(object sender, EventArgs e) => OpenDialog(new SAV_PokeBlockORAS((SAV6AO)SAV));
+    private void B_OpenSuperTraining_Click(object sender, EventArgs e) => OpenDialog(new SAV_SuperTrain((SAV6)SAV));
+    private void B_OpenSecretBase_Click(object sender, EventArgs e) => OpenDialog(new SAV_SecretBase((SAV6AO)SAV));
+    private void B_CellsStickers_Click(object sender, EventArgs e) => OpenDialog(new SAV_ZygardeCell((SAV7)SAV));
     private void B_LinkInfo_Click(object sender, EventArgs e) => OpenDialog(new SAV_Link6(SAV));
     private void B_OpenApricorn_Click(object sender, EventArgs e) => OpenDialog(new SAV_Apricorn((SAV4HGSS)SAV));
-    private void B_CGearSkin_Click(object sender, EventArgs e) => OpenDialog(new SAV_CGearSkin(SAV));
+    private void B_CGearSkin_Click(object sender, EventArgs e) => OpenDialog(new SAV_CGearSkin((SAV5)SAV));
     private void B_OpenTrainerInfo_Click(object sender, EventArgs e) => OpenDialog(GetTrainerEditor(SAV));
     private void B_OpenOPowers_Click(object sender, EventArgs e) => OpenDialog(new SAV_OPower((ISaveBlock6Main)SAV));
     private void B_OpenHoneyTreeEditor_Click(object sender, EventArgs e) => OpenDialog(new SAV_HoneyTree((SAV4Sinnoh)SAV));
     private void B_OpenGeonetEditor_Click(object sender, EventArgs e) => OpenDialog(new SAV_Geonet4((SAV4)SAV));
     private void B_OpenUnityTowerEditor_Click(object sender, EventArgs e) => OpenDialog(new SAV_UnityTower((SAV5)SAV));
+    private void B_OpenChatterEditor_Click(object sender, EventArgs e) => OpenDialog(new SAV_Chatter(SAV));
 
     private void B_Roamer_Click(object sender, EventArgs e)
     {
@@ -565,20 +566,22 @@ public partial class SAVEditor : UserControl, ISlotViewer<PictureBox>, ISaveFile
         if (SAV is SAV9SV sv)
         {
             if (sender == B_Raids)
-                OpenDialog(new SAV_Raid9(sv, sv.RaidPaldea));
-            else if (sender == B_RaidKitakami)
-                OpenDialog(new SAV_Raid9(sv, sv.RaidKitakami));
+                OpenDialog(new SAV_Raid9(sv, TeraRaidOrigin.Paldea));
+            else if (sender == B_RaidsDLC1)
+                OpenDialog(new SAV_Raid9(sv, TeraRaidOrigin.Kitakami));
+            else if (sender == B_RaidsDLC2)
+                OpenDialog(new SAV_Raid9(sv, TeraRaidOrigin.BlueberryAcademy));
             else if (sender == B_RaidsSevenStar)
-                OpenDialog(new SAV_RaidSevenStar9(sv, sv.RaidSevenStar));
+                OpenDialog(new SAV_RaidSevenStar9(sv));
         }
         else if (SAV is SAV8SWSH swsh)
         {
             if (sender == B_Raids)
-                OpenDialog(new SAV_Raid8(swsh, swsh.Raid));
-            else if (sender == B_RaidArmor)
-                OpenDialog(new SAV_Raid8(swsh, swsh.RaidArmor));
-            else
-                OpenDialog(new SAV_Raid8(swsh, swsh.RaidCrown));
+                OpenDialog(new SAV_Raid8(swsh, MaxRaidOrigin.Galar));
+            else if (sender == B_RaidsDLC1)
+                OpenDialog(new SAV_Raid8(swsh, MaxRaidOrigin.IsleOfArmor));
+            else if(sender == B_RaidsDLC2)
+                OpenDialog(new SAV_Raid8(swsh, MaxRaidOrigin.CrownTundra));
         }
     }
 
@@ -670,12 +673,12 @@ public partial class SAVEditor : UserControl, ISlotViewer<PictureBox>, ISaveFile
 
     private void B_OpenMiscEditor_Click(object sender, EventArgs e)
     {
-        using var form = SAV.Generation switch
+        using var form = SAV switch
         {
-            3 => new SAV_Misc3(SAV),
-            4 => new SAV_Misc4((SAV4)SAV),
-            5 => new SAV_Misc5(SAV),
-            8 when SAV is SAV8BS bs => new SAV_Misc8b(bs),
+            SAV3 sav3 => new SAV_Misc3(sav3),
+            SAV4 sav4 => new SAV_Misc4(sav4),
+            SAV5 sav5 => new SAV_Misc5(sav5),
+            SAV8BS bs => new SAV_Misc8b(bs),
             _ => (Form?)null,
         };
         form?.ShowDialog();
@@ -1007,7 +1010,7 @@ public partial class SAVEditor : UserControl, ISlotViewer<PictureBox>, ISaveFile
         WindowTranslationRequired |= ToggleViewParty(SAV, BoxTab);
         int PartyTab = tabBoxMulti.TabPages.IndexOf(Tab_PartyBattle);
         WindowTranslationRequired |= ToggleViewDaycare(SAV, BoxTab, PartyTab);
-        SetPKMBoxes();   // Reload all of the PKX Windows
+        SetPKMBoxes(); // Reload all Entity picture boxes
 
         ToggleViewMisc(SAV);
 
@@ -1017,7 +1020,7 @@ public partial class SAVEditor : UserControl, ISlotViewer<PictureBox>, ISaveFile
 
     private void ToggleViewReset()
     {
-        // Close subforms that are save dependent
+        // Close sub-forms that are SaveFile dependent
         foreach (var z in M.Boxes.Skip(1).ToArray())
             z.FindForm()?.Close();
 
@@ -1142,7 +1145,7 @@ public partial class SAVEditor : UserControl, ISlotViewer<PictureBox>, ISaveFile
         B_OpenHallofFame.Visible = sav is ISaveBlock6Main or SAV7;
         B_OpenOPowers.Visible = sav is ISaveBlock6Main;
         B_OpenPokedex.Visible = sav.HasPokeDex;
-        B_OpenBerryField.Visible = sav is SAV6XY; // oras undocumented
+        B_OpenBerryField.Visible = sav is SAV6XY; // OR/AS undocumented
         B_OpenFriendSafari.Visible = sav is SAV6XY;
         B_OpenEventFlags.Visible = sav is IEventFlag37 or SAV1 or SAV2 or SAV8BS or SAV7b;
         B_CGearSkin.Visible = sav.Generation == 5;
@@ -1157,6 +1160,7 @@ public partial class SAVEditor : UserControl, ISlotViewer<PictureBox>, ISaveFile
         B_OpenUGSEditor.Visible = sav is SAV4Sinnoh or SAV8BS;
         B_OpenGeonetEditor.Visible = sav is SAV4;
         B_OpenUnityTowerEditor.Visible = sav is SAV5;
+        B_OpenChatterEditor.Visible = sav is SAV4 or SAV5;
         B_OpenSealStickers.Visible = B_Poffins.Visible = sav is SAV8BS;
         B_OpenApricorn.Visible = sav is SAV4HGSS;
         B_OpenRTCEditor.Visible = sav.Generation == 2 || sav is IGen3Hoenn;
@@ -1164,9 +1168,8 @@ public partial class SAVEditor : UserControl, ISlotViewer<PictureBox>, ISaveFile
 
         B_Raids.Visible = sav is SAV8SWSH or SAV9SV;
         B_RaidsSevenStar.Visible = sav is SAV9SV;
-        B_RaidArmor.Visible = sav is SAV8SWSH { SaveRevision: >= 1 };
-        B_RaidCrown.Visible = sav is SAV8SWSH { SaveRevision: >= 2 };
-        B_RaidKitakami.Visible = sav is SAV9SV { SaveRevision: >= 1 };
+        B_RaidsDLC1.Visible = sav is SAV8SWSH { SaveRevision: >= 1 } or SAV9SV { SaveRevision: >= 1 };
+        B_RaidsDLC2.Visible = sav is SAV8SWSH { SaveRevision: >= 2 } or SAV9SV { SaveRevision: >= 2 };
         FLP_SAVtools.Visible = B_Blocks.Visible = true;
 
         var list = FLP_SAVtools.Controls.OfType<Control>().OrderBy(z => z.Text).ToArray();

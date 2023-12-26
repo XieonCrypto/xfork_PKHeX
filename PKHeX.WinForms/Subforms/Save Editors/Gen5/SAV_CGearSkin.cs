@@ -12,7 +12,7 @@ public partial class SAV_CGearSkin : Form
     private readonly SaveFile Origin;
     private readonly SAV5 SAV;
 
-    public SAV_CGearSkin(SaveFile sav)
+    public SAV_CGearSkin(SAV5 sav)
     {
         InitializeComponent();
         WinFormsUtil.TranslateInterface(this, Main.CurrentLanguage);
@@ -96,7 +96,7 @@ public partial class SAV_CGearSkin : Form
         var data = new byte[CGearBackground.SIZE_CGB];
         bool cgb = SAV is SAV5B2W2;
         bg.Write(data, cgb);
-        if (data.AsSpan().IndexOfAnyExcept<byte>(0) != -1)
+        if (data.AsSpan().ContainsAnyExcept<byte>(0))
         {
             SAV.CGearSkinData = data;
             Origin.CopyChangesFrom(SAV);

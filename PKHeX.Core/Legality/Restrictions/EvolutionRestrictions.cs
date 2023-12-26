@@ -17,32 +17,33 @@ internal static class EvolutionRestrictions
     /// </summary>
     private static ushort GetSpeciesEvolutionMove(ushort species) => species switch
     {
-        (int)Eevee => EEVEE,
-        (int)MimeJr => (int)Mimic,
-        (int)Bonsly => (int)Mimic,
-        (int)Aipom => (int)DoubleHit,
-        (int)Lickitung => (int)Rollout,
-        (int)Tangela => (int)AncientPower,
-        (int)Yanma => (int)AncientPower,
-        (int)Piloswine => (int)AncientPower,
-        (int)Steenee => (int)Stomp,
-        (int)Clobbopus => (int)Taunt,
-        (int)Stantler => (int)PsyshieldBash,
-        (int)Qwilfish => (int)BarbBarrage,
-        (int)Primeape => (int)RageFist,
-        (int)Girafarig => (int)TwinBeam,
-        (int)Dunsparce => (int)HyperDrill,
+        (int)Sylveon => EEVEE,
+        (int)MrMime => (int)Mimic,
+        (int)Sudowoodo => (int)Mimic,
+        (int)Ambipom => (int)DoubleHit,
+        (int)Lickilicky => (int)Rollout,
+        (int)Tangrowth => (int)AncientPower,
+        (int)Yanmega => (int)AncientPower,
+        (int)Mamoswine => (int)AncientPower,
+        (int)Tsareena => (int)Stomp,
+        (int)Grapploct => (int)Taunt,
+        (int)Wyrdeer => (int)PsyshieldBash,
+        (int)Overqwil => (int)BarbBarrage,
+        (int)Annihilape => (int)RageFist,
+        (int)Farigiraf => (int)TwinBeam,
+        (int)Dudunsparce => (int)HyperDrill,
+        (int)Hydrapple => (int)DragonCheer,
         _ => NONE,
     };
 
     private const ushort NONE = 0;
     private const ushort EEVEE = ushort.MaxValue;
 
-    private static ReadOnlySpan<ushort> EeveeFairyMoves => new ushort[]
-    {
+    private static ReadOnlySpan<ushort> EeveeFairyMoves =>
+    [
         (int)Charm,
         (int)BabyDollEyes,
-    };
+    ];
 
     /// <summary>
     /// Checks if the <see cref="pk"/> is correctly evolved, assuming it had a known move requirement evolution in its evolution chain.
@@ -61,11 +62,11 @@ internal static class EvolutionRestrictions
             return true;
 
         // Exclude evolution paths that did not require a move w/level-up evolution
-        var move = GetSpeciesEvolutionMove(enc.Species);
+        var move = GetSpeciesEvolutionMove(species);
         if (move is NONE)
             return true; // not a move evolution
         if (move is EEVEE)
-            return species != (int)Sylveon || IsValidEvolutionWithMoveSylveon(pk, enc, info);
+            return IsValidEvolutionWithMoveSylveon(pk, enc, info);
         if (!IsMoveSlotAvailable(info.Moves))
             return false;
 
@@ -98,8 +99,8 @@ internal static class EvolutionRestrictions
 
     private static bool IsMoveSlotAvailable(ReadOnlySpan<MoveResult> moves)
     {
-        // If the pokemon does not currently have the move, it could have been an egg move that was forgotten.
-        // This requires the pokemon to not have 4 other moves identified as egg moves or inherited level up moves.
+        // If the Pokémon does not currently have the move, it could have been an egg move that was forgotten.
+        // This requires the Pokémon to not have 4 other moves identified as egg moves or inherited level up moves.
         // If any move is not an egg source, then a slot could have been forgotten.
         foreach (var move in moves)
         {

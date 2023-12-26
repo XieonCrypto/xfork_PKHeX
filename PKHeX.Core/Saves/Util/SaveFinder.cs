@@ -64,12 +64,13 @@ public static class SaveFinder
     public static IEnumerable<string> GetSwitchBackupPaths(string root)
     {
         yield return Path.Combine(root, "switch", "Checkpoint", "saves");
+        yield return Path.Combine(root, "JKSV");
     }
 
     /// <summary>
     /// Extra list of Backup Paths used for detecting a save file.
     /// </summary>
-    public static readonly List<string> CustomBackupPaths = new();
+    public static readonly List<string> CustomBackupPaths = [];
 
     /// <summary>
     /// Finds a compatible save file that was most recently saved (by file write time).

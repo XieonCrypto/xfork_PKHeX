@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using static System.Buffers.Binary.BinaryPrimitives;
 
 namespace PKHeX.Core;
@@ -9,12 +10,12 @@ namespace PKHeX.Core;
 public abstract class SAV4Sinnoh : SAV4
 {
     protected override int FooterSize => 0x14;
-    protected SAV4Sinnoh(int gSize, int sSize) : base(gSize, sSize) { }
-    protected SAV4Sinnoh(byte[] data, int gSize, int sSize, int sStart) : base(data, gSize, sSize, sStart) { }
+    protected SAV4Sinnoh([ConstantExpected] int gSize, [ConstantExpected] int sSize) : base(gSize, sSize) { }
+    protected SAV4Sinnoh(byte[] data, [ConstantExpected] int gSize, [ConstantExpected] int sSize, [ConstantExpected] int sStart) : base(data, gSize, sSize, sStart) { }
 
     #region Storage
     // u32 currentBox
-    // box{pk4[30}[18]
+    // box{pk4[30][18]}
     // g4str[18] boxNames
     // byte[18] boxWallpapers
     private const int BOX_COUNT = 18;
@@ -39,7 +40,7 @@ public abstract class SAV4Sinnoh : SAV4
 
     public override byte[] BoxFlags
     {
-        get => new[] { Storage[BOX_FLAGS] };
+        get => [ Storage [BOX_FLAGS] ];
         set => Storage[BOX_FLAGS] = value[0];
     }
 
@@ -70,7 +71,7 @@ public abstract class SAV4Sinnoh : SAV4
 
     public bool PoketchFlag6 { get => (PoketchPacked & 0x40) != 0; set => PoketchPacked = (byte)(value ? (PoketchPacked | 0x40) : (PoketchPacked & ~0x40)); }
     public bool PoketchFlag7 { get => (PoketchPacked & 0x80) != 0; set => PoketchPacked = (byte)(value ? (PoketchPacked | 0x80) : (PoketchPacked & ~0x80)); }
-    public byte Poketch1 { get => General[PoketchStart + 1]; set => General[PoketchStart + 1] = value; }
+    public byte PoketchUnlockedCount { get => General[PoketchStart + 1]; set => General[PoketchStart + 1] = value; }
     public sbyte CurrentPoketchApp { get => (sbyte)General[PoketchStart + 2]; set => General[PoketchStart + 2] = (byte)Math.Min((sbyte)PoketchApp.Alarm_Clock, value); }
 
     public bool GetPoketchAppUnlocked(PoketchApp index)
@@ -152,7 +153,6 @@ public abstract class SAV4Sinnoh : SAV4
     /// <summary>
     /// First 40 are the sphere type, last 40 are the sphere sizes
     /// </summary>
-    /// <returns></returns>
     public Span<byte> GetUGI_Spheres() => General.Slice(OFS_UG_Items + 0x78, UG_POUCH_SIZE * 2);
 
     #endregion
